@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Login</title>
+  	<link rel="stylesheet" href="css/vendor/bootstrap.min.css">
+	<script>
+		let frm, pst, correo;
+
+		window.onload = ()=>{
+			frm = document.getElementById('form-login');
+			correo = document.getElementById("correo");
+			pst = new Pristine(frm);
+
+			frm.addEventListener("submit",function(e){
+				e.preventDefault();
+				if(pst.validate())
+				{
+					procesarDatos();
+				}
+				else
+				{
+					frm.classList.add("was-validated");
+				}
+			});
+		}
+		function validarLogin(json)
+		{
+			let usuario = JSON.parse(localStorage.getItem(correo.value));
+
+			console.log(usuario);
+			console.log(json);
+
+			if(usuario.clave == json.clave)
+			{
+				alert("Usuario logeado");
+			}
+			else
+			{
+				alert("Datos incorrectos");
+				frm.reset();
+			}
+			
+		}
+		function procesarDatos(){
+	    
+			let usuario = localStorage.getItem(correo.value);
+
+			if(usuario)
+			{
+		      fetch('scripts/script.php', {
+		        method: 'post',
+		        body: new FormData(frm)
+		      }).then(function(response) {
+		        return response.json();
+		      }).then(function(json){
+		        validarLogin(json);
+		      }).catch(function(err) {
+		        // Error :(
+		        console.log(err);
+		      });
+			}
+			else
+			{
+				alert("Datos incorrectos");
+			}
+	    }
+	</script>
+</head>
+<body>
+	<form novalidate id="form-login" method="post" novalidate class="container">
+		<div class="form-group">
+			<label for="correo">Usuario</label>
+			<input type="text" id="correo" name="correo" class="form-control" required>
+		</div>
+		<div class="form-group">
+			<label for="clave">Password</label>
+			<input type="password" id="clave1" name="clave1" class="form-control" required>
+		</div>
+		<div class="form-group">
+			<input type="submit" class="btn btn-primary" value="Ingresar">
+		</div>
+	</form>
+	<script src="js/vendor/pristine.min.js"></script>
+</body>
+</html>

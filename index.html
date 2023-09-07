@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Formulario</title>
+	<link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/vendor/bootstrap.min.css">
+  <!-- https://getbootstrap.com/docs/4.5/getting-started/download/ -->
+	<script>
+    //https://github.com/sha256/Pristine
+		let pst, frm;
+
+		window.onload = function () {
+
+			frm = document.getElementById("form-demo");
+			pst = new Pristine(frm);
+
+			frm.addEventListener('submit', function (e) {
+			   e.preventDefault();
+			   // check if the form is valid
+			   if(pst.validate())
+         {
+            procesarPassword();
+         }
+         else
+         {
+          frm.classList.add("was-validated");
+         }
+         //frm.submit();
+			});
+      frm.addEventListener('reset', function (e) {
+        frm.classList.remove("was-validated");
+      });
+		};
+	 //https://davidwalsh.name/fetch
+    //https://developer.mozilla.org/es/docs/Web/API/Fetch_API
+    function procesarPassword(){//Explicar las dos formas de consumir el script por el for o por acá
+      // url (required), options (optional)
+      fetch('scripts/script.php', {
+        method: 'post',
+        body: new FormData(frm)
+      }).then(function(response) {
+        return response.json();
+      }).then(function(json){
+        guardarDatosLocales(json);
+      }).catch(function(err) {
+        // Error :(
+        console.log(err);
+      });
+    }
+    function guardarDatosLocales(json){
+        localStorage.setItem(correo.value,JSON.stringify(json));
+        location.href = "login.html";
+    }
+	</script>
+</head>
+<body>
+
+<!-- <form id="form-demo" novalidate method="post" class="container" action="scripts/script.php"> -->
+<form id="form-demo" method="post" novalidate class="container" action="scripts/script.php">
+	<input type="hidden" />
+  <div class="form-group">
+    <label>Nombre</label>
+    <input type="text" id="nombre" name="nombre" class="form-control" required />
+  </div>
+  <div class="form-group">
+    <label>Apellido</label>
+    <input type="text" id="apellido" name="apellido" class="form-control" required />
+  </div>
+  <div class="form-group">
+    <label>Celular</label>
+    <input type="tel" id="celular" name="celular" class="form-control" required />
+  </div>
+  <div class="form-group">
+      <label>Correo electrónico</label>
+      <input type="email" id="correo" name="correo" class="form-control" required/>
+  </div>
+  <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="clave1" name="clave1" class="form-control" required/>
+  </div>
+  <div class="form-group">
+      <label>Validar Password</label>
+      <input type="password" id="clave2" name="clave2" class="form-control" required/>
+  </div>
+  <div class="form-group">
+    <select required id="ciudad" name="ciudad" class="custom-select">
+      <option value="">Ciudad</option>
+      <option value="01">Medellín</option>
+      <option value="02">Bogotá</option>
+      <option value="03">Cartagena</option>
+      <option value="04">Cali</option>
+      <option value="05">Santa Marta</option>
+    </select>
+  </div>  
+  <div class="form-group">
+    <input type="submit" class="btn btn-primary" value="Enviar" />
+    <input type="reset" class="btn btn-primary" value="Restablecer" />
+  </div>
+</form>
+<script src="js/vendor/pristine.min.js"></script>
+</body>
+</html>
